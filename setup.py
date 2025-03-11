@@ -40,9 +40,9 @@ class CustomBuildExt(build_ext):
         for py_file in py_files:
             if os.path.exists(py_file):
                 os.remove(py_file)
-                print(f"✅ Deleted: {py_file}")
+                print(f"Deleted: {py_file}")
             else:
-                print(f"⚠️ Warning: {py_file} not found. Skipping.")
+                print(f"Warning: {py_file} not found. Skipping.")
 
 
 setup(
