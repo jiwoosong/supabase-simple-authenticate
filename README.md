@@ -15,15 +15,15 @@ $ pip install git+https://github.com/jiwoosong/supabase-simple-authenticate.git@
    ```
 3. Generate **Database** with setting below
 
-   | Column Name   | Data Type   | Constraints | Description |
-   |--------------|------------|-------------|-------------|
-   | `id`         | `int8` | Primary Key, Auto Increment | 고유 ID (자동 증가) |
-   | `computer_id` | `text` | NOT NULL | 컴퓨터 식별자 |
-   | `license`    | `float8` | DEFAULT 0.0 | 라이선스 정보 (버전, 권한 등) |
-   | `created_at` | `timestamp` | DEFAULT now() | 생성 시각 (자동 기록) |
-   | `updated_at` | `timestamp` | DEFAULT now() | 업데이트 시각 (자동 기록) |
-   | `request_n`  | `int8` | DEFAULT 0 | 요청 횟수 (사용량 트래킹) |
-   | `extra_data` | `jsonb` | NULLABLE | 추가 데이터 (JSON 형식) |
+   | Column Name   | Data Type   | Constraints | Description                      |
+   |--------------|------------|-------------|----------------------------------|
+   | `id`         | `int8` | Primary Key, Auto Increment | ID (automatic increase)          |
+   | `computer_id` | `text` | NOT NULL | Computer ID                      |
+   | `license`    | `float8` | DEFAULT 0.0 | License Number                   |
+   | `created_at` | `timestamp` | DEFAULT now() | First Request Date               |
+   | `updated_at` | `timestamp` | DEFAULT now() | Request Date                     |
+   | `request_n`  | `int8` | DEFAULT 0 | Request Number (Usage Tracking)  |
+   | `extra_data` | `jsonb` | NULLABLE | Extra Informations (JSON format) |
 
 4. Generate **Policy** with setting below
    > ⚠️ Note: This is just example and vulnerable setting. Select appropriate policy with your purpose.
@@ -82,7 +82,7 @@ JWT = r'YOUR-SUPABASE-JWT'
    ```python
    >>> SupaSimpleAuth.client.client_requestclient_request(URL, DB_Name, API_KEY, JWT, init_license=1.0, init_extra_data=None)
    {'status': 'success',
-    'message': '신규 라이선스 등록 완료 (computer_id=YOUR-DESKTOP-NAME)',
+    'message': 'New license registered successfully (computer_id=YOUR-DESKTOP-NAME)',
     'data': {'computer_id': 'YOUR-DESKTOP-NAME',
              'license': 1.0,
              'request_n': 1,
@@ -93,7 +93,7 @@ JWT = r'YOUR-SUPABASE-JWT'
    ```python
     >>> SupaSimpleAuth.client.client_requestclient_request(URL, DB_Name, API_KEY, JWT, init_license=1.0, init_extra_data=None)
    {'status': 'success',
-    'message': '조회 횟수 업데이트 완료: 2회',
+    'message': 'Request count updated successfully: 2 times',
     'data': {'computer_id': 'YOUR-DESKTOP-NAME',
              'license': 1.0,
              'request_n': 2,
