@@ -96,6 +96,6 @@ def admin_request(URL, DB_Name, API_KEY, JWT):
         else:
             print("❌ 잘못된 선택입니다. 다시 시도하세요.")
 
-
-if __name__ == "__main__":
-    admin_request(URL, DB_Name, API_KEY, JWT)
+#
+# if __name__ == "__main__":
+#     admin_request(URL, DB_Name, API_KEY, JWT)

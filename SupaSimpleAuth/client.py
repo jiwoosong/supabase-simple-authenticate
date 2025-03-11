@@ -78,6 +78,6 @@ def client_request(URL, DB_Name, API_KEY, JWT, init_license=1.0, init_extra_data
             "data": None
         }
 
-if __name__ == "__main__":
-    res = client_request(URL, DB_Name, API_KEY, JWT, init_license=1.0, init_extra_data=None)
-    print(res)
+# if __name__ == "__main__":
+#     res = client_request(URL, DB_Name, API_KEY, JWT, init_license=1.0, init_extra_data=None)
+#     print(res)
