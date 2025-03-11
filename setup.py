@@ -43,7 +43,7 @@ setup(
     },
 )
 
-# ✅ 빌드 후 Python 소스 파일 삭제 (패키지 내부에 남지 않도록)
-for py_file in py_files:
-    if os.path.exists(py_file):
-        os.remove(py_file)
+# # ✅ 빌드 후 Python 소스 파일 삭제 (패키지 내부에 남지 않도록)
+# for py_file in py_files:
+#     if os.path.exists(py_file):
+#         os.remove(py_file)
