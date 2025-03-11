@@ -4,6 +4,7 @@ import subprocess
 import sys
 from setuptools import setup, find_packages, Extension
 from Cython.Build import cythonize
+from setuptools.command.build_ext import build_ext
 
 # Cython 자동 설치
 try:
@@ -18,12 +19,31 @@ install_requires = ["requests"]
 # OS에 따라 확장자 결정
 ext = ".pyd" if platform.system() == "Windows" else ".so"
 
-# 변환할 파일 목록
-py_files = ["./SupaSimpleAuth/client.py", "./SupaSimpleAuth/admin.py"]
+# ✅ 변환할 파일 목록 (정확히 이 파일들만 삭제할 것)
+py_files = ["SupaSimpleAuth/client.py", "SupaSimpleAuth/admin.py"]
+
+# ✅ Cython 빌드 수행
 ext_modules = cythonize([
-    Extension("SupaSimpleAuth.client", ["./SupaSimpleAuth/client.py"]),
-    Extension("SupaSimpleAuth.admin", ["./SupaSimpleAuth/admin.py"])
+    Extension("SupaSimpleAuth.client", ["SupaSimpleAuth/client.py"]),
+    Extension("SupaSimpleAuth.admin", ["SupaSimpleAuth/admin.py"])
 ], compiler_directives={'language_level': "3"})
+
+
+class CustomBuildExt(build_ext):
+    """Cython 빌드 후 정확히 지정한 .py 파일만 삭제하는 커스텀 클래스"""
+
+    def run(self):
+        # 원래 Cython 빌드 실행
+        build_ext.run(self)
+
+        # ✅ 빌드 완료 후 특정 .py 파일만 삭제
+        for py_file in py_files:
+            if os.path.exists(py_file):
+                os.remove(py_file)
+                print(f"✅ Deleted: {py_file}")
+            else:
+                print(f"⚠️ Warning: {py_file} not found. Skipping.")
+
 
 setup(
     name='SupaSimpleAuth',
@@ -41,14 +61,5 @@ setup(
             "supabase-admin = SupaSimpleAuth.admin:admin_interface"
         ]
     },
+    cmdclass={'build_ext': CustomBuildExt}  # ✅ Cython 빌드 후 특정 .py 파일 삭제
 )
-
-# 🔹 운영체제별 확장자 설정
-ext = ".pyd" if sys.platform == "win32" else ".so"
-
-# ✅ 빌드 후 Python 소스 파일 삭제 (패키지 내부에 남지 않도록)
-for py_file in py_files:
-    encrypt_file = py_file.replace('.py', ext)
-    if os.path.exists(encrypt_file):
-        if os.path.exists(py_file):
-            os.remove(py_file)
