@@ -2,33 +2,33 @@ import requests
 import base64
 
 def list_licenses(URL, DB_Name, HEADERS):
-    """모든 라이선스 조회"""
+    """Retrieve all licenses"""
     url = f"{URL}/rest/v1/{DB_Name}?select=*"
     response = requests.get(url, headers=HEADERS)
     response.raise_for_status()
     return response.json()
 
 def update_license(URL, DB_Name, HEADERS, computer_id, new_license):
-    """특정 사용자 라이선스 수정 (존재 여부 확인 + 타입 검증)"""
+    """Modify a specific user's license (Check existence + Type validation)"""
 
-    # ✅ 먼저 해당 `computer_id`가 존재하는지 확인
+    # ✅ First, check if the `computer_id` exists
     check_url = f"{URL}/rest/v1/{DB_Name}?computer_id=eq.{computer_id}&select=computer_id"
     check_response = requests.get(check_url, headers=HEADERS)
 
     if check_response.status_code != 200 or not check_response.json():
         return {
             "status": "error",
-            "message": f"❌ 지정된 컴퓨터 ID({computer_id})가 존재하지 않습니다."
+            "message": f"❌ The specified computer ID ({computer_id}) does not exist."
         }
 
-    # ✅ `license` 값이 `float` 타입인지 확인
+    # ✅ Ensure that `license` value is of type `float`
     if not isinstance(new_license, (int, float)) or not (0.0 <= new_license <= 1.0):
         return {
             "status": "error",
-            "message": "❌ 라이선스 값은 0.0 ~ 1.0 사이의 숫자여야 합니다."
+            "message": "❌ License value must be a number between 0.0 and 1.0."
         }
 
-    # 🔹 라이선스 업데이트 실행
+    # 🔹 Execute license update
     update_payload = {"license": new_license}
     url = f"{URL}/rest/v1/{DB_Name}?computer_id=eq.{computer_id}"
     response = requests.patch(url, json=update_payload, headers=HEADERS)
@@ -36,27 +36,24 @@ def update_license(URL, DB_Name, HEADERS, computer_id, new_license):
     if response.status_code in [200, 204]:
         return {
             "status": "success",
-            "message": f"✅ 사용자 {computer_id}의 라이선스가 {new_license}로 변경되었습니다."
+            "message": f"✅ License for user {computer_id} has been updated to {new_license}."
         }
     else:
         return {
             "status": "error",
-            "message": f"❌ 라이선스 업데이트 실패: {response.text}"
+            "message": f"❌ License update failed: {response.text}"
         }
 
-
-
 def reset_licenses(URL, DB_Name, ADMIN_HEADERS):
-    """모든 라이선스 초기화 (Supabase에서 전체 삭제)"""
-    url = f"{URL}/rest/v1/{DB_Name}?computer_id=neq.NULL"  # ✅ 모든 데이터 삭제를 위한 조건
+    """Reset all licenses (Delete all records from Supabase)"""
+    url = f"{URL}/rest/v1/{DB_Name}?computer_id=neq.NULL"  # ✅ Condition for deleting all data
 
     response = requests.delete(url, headers=ADMIN_HEADERS)
 
     if response.status_code in [200, 204]:
-        return "✅ 모든 라이선스가 초기화되었습니다."
+        return "✅ All licenses have been reset."
     else:
-        return f"❌ 초기화 실패: {response.text}"
-
+        return f"❌ Reset failed: {response.text}"
 
 def admin_request(URL, DB_Name, API_KEY, JWT):
     HEADERS = {
@@ -65,36 +62,36 @@ def admin_request(URL, DB_Name, API_KEY, JWT):
         "Content-Type": "application/json"
     }
     while True:
-        print("\n=== 관리자 모드 ===")
-        print("1. 모든 라이선스 조회")
-        print("2. 특정 사용자 라이선스 수정")
-        print("3. 모든 라이선스 초기화")
-        print("4. 종료")
+        print("\n=== Admin Mode ===")
+        print("1. View all licenses")
+        print("2. Modify a specific user's license")
+        print("3. Reset all licenses")
+        print("4. Exit")
 
-        choice = input("원하는 작업을 선택하세요 (1~4): ")
+        choice = input("Select an action (1~4): ")
 
         if choice == "1":
             licenses = list_licenses(URL, DB_Name, HEADERS)
-            print("=== 라이선스 목록 ===")
+            print("=== License List ===")
             for item in licenses:
                 print(item)
         elif choice == "2":
-            computer_id = input("수정할 컴퓨터 ID를 입력하세요: ")
-            new_license = float(input("새 라이선스 값을 입력하세요 (0 ~ 1): "))
+            computer_id = input("Enter the computer ID to modify: ")
+            new_license = float(input("Enter the new license value (0 ~ 1): "))
             result = update_license(URL, DB_Name, HEADERS, computer_id, new_license)
             print(result)
         elif choice == "3":
-            confirm = input("⚠️ 정말로 모든 라이선스를 초기화하시겠습니까? (yes/no): ")
+            confirm = input("⚠️ Are you sure you want to reset all licenses? (yes/no): ")
             if confirm.lower() == "yes":
                 result = reset_licenses(URL, DB_Name, HEADERS)
                 print(result)
             else:
-                print("초기화가 취소되었습니다.")
+                print("Reset has been canceled.")
         elif choice == "4":
-            print("프로그램을 종료합니다.")
+            print("Exiting the program.")
             break
         else:
-            print("❌ 잘못된 선택입니다. 다시 시도하세요.")
+            print("❌ Invalid selection. Please try again.")
 
 #
 # if __name__ == "__main__":
