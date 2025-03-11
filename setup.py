@@ -43,7 +43,12 @@ setup(
     },
 )
 
-# # ✅ 빌드 후 Python 소스 파일 삭제 (패키지 내부에 남지 않도록)
-# for py_file in py_files:
-#     if os.path.exists(py_file):
-#         os.remove(py_file)
+# 🔹 운영체제별 확장자 설정
+ext = ".pyd" if sys.platform == "win32" else ".so"
+
+# ✅ 빌드 후 Python 소스 파일 삭제 (패키지 내부에 남지 않도록)
+for py_file in py_files:
+    encrypt_file = py_file.replace('.py', ext)
+    if os.path.exists(encrypt_file):
+        if os.path.exists(py_file):
+            os.remove(py_file)
