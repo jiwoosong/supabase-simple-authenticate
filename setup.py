@@ -4,7 +4,7 @@ import subprocess
 import sys
 from setuptools import setup, find_packages, Extension
 from Cython.Build import cythonize
-from setuptools.command.build_ext import build_ext
+from setuptools.command.install import install
 
 # Cython 자동 설치
 try:
@@ -29,21 +29,22 @@ ext_modules = cythonize([
 ], compiler_directives={'language_level': "3"})
 
 
-class CustomBuildExt(build_ext):
-    """Cython 빌드 후 정확히 지정한 .py 파일만 삭제하는 커스텀 클래스"""
-
+class CustomInstallCommand(install):
+    """설치 완료 후 .py 파일을 자동 삭제하는 커스텀 명령어"""
     def run(self):
-        # 원래 Cython 빌드 실행
-        build_ext.run(self)
+        install.run(self)  # 기본 설치 수행
+        self.cleanup_files()  # 설치 완료 후 .py 삭제
 
-        # ✅ 빌드 완료 후 특정 .py 파일만 삭제
+    def cleanup_files(self):
+        """설치 후 .py 파일 삭제"""
+        package_dir = os.path.join(self.install_lib, "SupaSimpleAuth")
         for py_file in py_files:
-            print(py_file)
-            if os.path.exists(py_file):
-                os.remove(py_file)
-                print(f"Deleted: {py_file}")
+            target_file = os.path.join(package_dir, os.path.basename(py_file))
+            if os.path.exists(target_file):
+                os.remove(target_file)
+                print(f"Deleted after install: {target_file}")
             else:
-                print(f"Warning: {py_file} not found. Skipping.")
+                print(f"Warning: {target_file} not found. Skipping.")
 
 
 setup(
@@ -62,5 +63,5 @@ setup(
             "supabase-admin = SupaSimpleAuth.admin:admin_interface"
         ]
     },
-    cmdclass={'build_ext': CustomBuildExt}  # ✅ Cython 빌드 후 특정 .py 파일 삭제
+    cmdclass={'install': CustomInstallCommand}  # ✅ 설치 후 `.py` 삭제하도록 설정
 )
