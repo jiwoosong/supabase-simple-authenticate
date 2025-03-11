@@ -19,10 +19,10 @@ install_requires = ["requests"]
 ext = ".pyd" if platform.system() == "Windows" else ".so"
 
 # 변환할 파일 목록
-py_files = ["SupaSimpleAuth/client.py", "SupaSimpleAuth/admin.py"]
+py_files = ["./SupaSimpleAuth/client.py", "./SupaSimpleAuth/admin.py"]
 ext_modules = cythonize([
-    Extension("SupaSimpleAuth.client", ["SupaSimpleAuth/client.py"]),
-    Extension("SupaSimpleAuth.admin", ["SupaSimpleAuth/admin.py"])
+    Extension("SupaSimpleAuth.client", ["./SupaSimpleAuth/client.py"]),
+    Extension("SupaSimpleAuth.admin", ["./SupaSimpleAuth/admin.py"])
 ], compiler_directives={'language_level': "3"})
 
 setup(
