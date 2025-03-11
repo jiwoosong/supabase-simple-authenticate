@@ -38,6 +38,7 @@ class CustomBuildExt(build_ext):
 
         # ✅ 빌드 완료 후 특정 .py 파일만 삭제
         for py_file in py_files:
+            print(py_file)
             if os.path.exists(py_file):
                 os.remove(py_file)
                 print(f"Deleted: {py_file}")
