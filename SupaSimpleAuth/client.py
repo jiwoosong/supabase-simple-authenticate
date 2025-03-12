@@ -29,6 +29,9 @@ def client_request(URL, DB_Name, API_KEY, JWT, init_license=1.0, init_extra_data
             }
             if init_extra_data is not None:
                 update_payload['extra_data'] = init_extra_data
+                if 'SOFTWARE_VERSION' in init_extra_data:
+                    if init_extra_data['SOFTWARE_VERSION'] != license_info.get("extra_data", 0)['SOFTWARE_VERSION']:
+                        update_payload['license'] = init_license
             update_url = f"{URL}/rest/v1/{DB_Name}?computer_id=eq.{computer_id}"
             update_response = requests.patch(update_url, json=update_payload, headers=HEADERS)
             update_response.raise_for_status()  # Raise an exception for HTTP errors
