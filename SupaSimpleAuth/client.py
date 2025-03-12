@@ -36,10 +36,12 @@ def client_request(URL, DB_Name, API_KEY, JWT, init_license=1.0, init_extra_data
             update_response = requests.patch(update_url, json=update_payload, headers=HEADERS)
             update_response.raise_for_status()  # Raise an exception for HTTP errors
 
+            license_info.update(update_payload)
+
             return {
                 "status": "success",
                 "message": f"Request count updated successfully: {new_count} times",
-                "data": {**license_info, "request_n": new_count, "updated_at": now}
+                "data": {**license_info}
             }
 
         elif isinstance(data, list) and len(data) == 0:
