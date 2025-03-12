@@ -46,9 +46,9 @@ $ pip install git+https://github.com/jiwoosong/supabase-simple-authenticate.git@
        alter policy "Update"
        on "public"."YOUR-DATABASE-NAME"
        to public
-       using (computer_id = CURRENT_USER)
+       using (auth.role() = 'anon'::text)
        with check (
-       (computer_id = CURRENT_USER) 
+       (auth.role() = 'anon'::text) 
        AND (request_n IS NOT NULL) 
        AND (updated_at IS NOT NULL)
        );
@@ -58,9 +58,9 @@ $ pip install git+https://github.com/jiwoosong/supabase-simple-authenticate.git@
        ALTER POLICY "Update"
        ON "public"."YOUR-DATABASE-NAME"
        TO public
-       USING (computer_id = CURRENT_USER)
+       USING (auth.role() = 'anon'::text)
        WITH CHECK (
-           (computer_id = CURRENT_USER)
+           (auth.role() = 'anon'::text)
            AND (NEW.request_n IS NOT NULL) 
            AND (NEW.updated_at IS NOT NULL)
            AND (NEW.computer_id = OLD.computer_id) -- Fix this column 
